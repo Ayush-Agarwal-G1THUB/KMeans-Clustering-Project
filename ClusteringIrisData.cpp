@@ -21,13 +21,13 @@
 using namespace std;
 
 struct labelled_x {
-// Represents a data point with four features
-// and the species label
-double feature1; // Sepal length
-double feature2; // Sepal width
-double feature3; // Petal length
-double feature4; // Petal width
-string species_label; // known species label
+    // Represents a data point with four features
+    // and the species label
+    double feature1; // Sepal length
+    double feature2; // Sepal width
+    double feature3; // Petal length
+    double feature4; // Petal width
+    string species_label; // known species label
 };
 
 // The Iris dataset, containing measurements for different Iris species
@@ -193,39 +193,39 @@ vector<labelled_x> dataset = {
 * The remaining data will be used for training.
 */
 void loadSets (vector<labelled_x> &training_set, vector<labelled_x> &test_set, const int& test_set_size) {
-// shuffle the dataset
-unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-default_random_engine rng(seed);
-vector<labelled_x> shuffledDataset = dataset;
-shuffle(shuffledDataset.begin(), shuffledDataset.end(), rng);
+    // shuffle the dataset
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    default_random_engine rng(seed);
+    vector<labelled_x> shuffledDataset = dataset;
+    shuffle(shuffledDataset.begin(), shuffledDataset.end(), rng);
 
-for (int i = 0; i < shuffledDataset.size(); i++) {
-// put n items in test_set
-if (i % (shuffledDataset.size() / test_set_size) == 0) {
-test_set.push_back(
-{
-shuffledDataset[i].feature1,
-shuffledDataset[i].feature2,
-shuffledDataset[i].feature3,
-shuffledDataset[i].feature4,
-shuffledDataset[i].species_label
-}
-);
-}
+    for (int i = 0; i < shuffledDataset.size(); i++) {
+        // put n items in test_set
+        if (i % (shuffledDataset.size() / test_set_size) == 0) {
+            test_set.push_back(
+                {
+                shuffledDataset[i].feature1,
+                shuffledDataset[i].feature2,
+                shuffledDataset[i].feature3,
+                shuffledDataset[i].feature4,
+                shuffledDataset[i].species_label
+                }
+            );
+        }
 
-// put all others in training_set
-else {
-training_set.push_back(
-{
-shuffledDataset[i].feature1,
-shuffledDataset[i].feature2,
-shuffledDataset[i].feature3,
-shuffledDataset[i].feature4,
-shuffledDataset[i].species_label
-}
-);
-}
-}
+        // put all others in training_set
+        else {
+            training_set.push_back(
+                {
+                shuffledDataset[i].feature1,
+                shuffledDataset[i].feature2,
+                shuffledDataset[i].feature3,
+                shuffledDataset[i].feature4,
+                shuffledDataset[i].species_label
+                }
+            );
+        }
+    }
 }
 
 /**
@@ -235,13 +235,13 @@ shuffledDataset[i].species_label
 * @param training_set The dataset used to pick initial centroid locations.
 */
 void initialiseCentroids (vector<labelled_x> &centroids, const int &num_centroids, vector<labelled_x> &training_set) {
-centroids.resize(num_centroids);
-for (labelled_x &centroid : centroids) {
-centroid.feature1 = training_set[rand()%training_set.size()].feature1;
-centroid.feature2 = training_set[rand()%training_set.size()].feature2;
-centroid.feature3 = training_set[rand()%training_set.size()].feature3;
-centroid.feature4 = training_set[rand()%training_set.size()].feature4;
-}
+    centroids.resize(num_centroids);
+    for (labelled_x &centroid : centroids) {
+        centroid.feature1 = training_set[rand()%training_set.size()].feature1;
+        centroid.feature2 = training_set[rand()%training_set.size()].feature2;
+        centroid.feature3 = training_set[rand()%training_set.size()].feature3;
+        centroid.feature4 = training_set[rand()%training_set.size()].feature4;
+    }
 }
 
 /**
@@ -251,10 +251,10 @@ centroid.feature4 = training_set[rand()%training_set.size()].feature4;
 * @return The squared Euclidean distance between the centroid and the point.
 */
 double computeCost (const labelled_x &centroid, const labelled_x &point) {
-return pow(centroid.feature1 - point.feature1, 2) +
-pow(centroid.feature2 - point.feature2, 2) +
-pow(centroid.feature3 - point.feature3, 2) +
-pow(centroid.feature4 - point.feature4, 2);
+    return  pow(centroid.feature1 - point.feature1, 2) +
+            pow(centroid.feature2 - point.feature2, 2) +
+            pow(centroid.feature3 - point.feature3, 2) +
+            pow(centroid.feature4 - point.feature4, 2);
 }
 
 /**
@@ -265,21 +265,22 @@ pow(centroid.feature4 - point.feature4, 2);
 * @param centroids The current centroids.
 */
 void assignClosestCentroids (vector<int>& c_assigned, const vector<labelled_x> &training_set, const vector<labelled_x> &centroids) {
-c_assigned.resize(training_set.size());
+    c_assigned.resize(training_set.size());
 
-for (int i = 0; i<training_set.size(); i++) {
-labelled_x point = training_set[i];
-double mincost = numeric_limits<double>::max();
+    for (int i = 0; i<training_set.size(); i++) {
+        labelled_x point = training_set[i];
+        double mincost = numeric_limits<double>::max();
 
-for (int j = 0; j<centroids.size(); j++) {
-labelled_x centroid = centroids[j];
-double cost = computeCost(centroid, point);
-if (cost < mincost) {
-mincost = cost;
-c_assigned[i] = j;
-}
-}
-}
+        for (int j = 0; j<centroids.size(); j++) {
+            labelled_x centroid = centroids[j];
+
+            double cost = computeCost(centroid, point);
+            if (cost < mincost) {
+                mincost = cost;
+                c_assigned[i] = j;
+            }
+        }
+    }
 }
 
 /**
@@ -291,35 +292,34 @@ c_assigned[i] = j;
 * @param c_assigned The current assignments of data points to centroids.
 */
 void updateCentroids (vector<labelled_x> &centroids, const int &num_centroids, vector<labelled_x> &training_set, vector<int> &c_assigned) {
-vector<labelled_x> centroidAverage(num_centroids, {0.0, 0.0, 0.0, 0.0});
-vector<int> countAssigned(num_centroids, 0);
+    vector<labelled_x> centroidAverage(num_centroids, {0.0, 0.0, 0.0, 0.0});
+    vector<int> countAssigned(num_centroids, 0);
 
-for (int i = 0; i<training_set.size(); i++) {
-// For every point in the training set
-// Add its values to the corresponding centroid position
-// in the centroidAverage vector
-centroidAverage[c_assigned[i]].feature1 += training_set[i].feature1;
-centroidAverage[c_assigned[i]].feature2 += training_set[i].feature2;
-centroidAverage[c_assigned[i]].feature3 += training_set[i].feature3;
-centroidAverage[c_assigned[i]].feature4 += training_set[i].feature4;
+    for (int i = 0; i<training_set.size(); i++) {
+        // For every point in the training set
+        // Add its values to the corresponding centroid position
+        // in the centroidAverage vector
+        centroidAverage[c_assigned[i]].feature1 += training_set[i].feature1;
+        centroidAverage[c_assigned[i]].feature2 += training_set[i].feature2;
+        centroidAverage[c_assigned[i]].feature3 += training_set[i].feature3;
+        centroidAverage[c_assigned[i]].feature4 += training_set[i].feature4;
 
-countAssigned[c_assigned[i]]++;
-}
+        countAssigned[c_assigned[i]]++;
+    }
 
-// divide by total number of points assigned to that centroid
-for (int i = 0; i<centroidAverage.size(); i++) {
-if (countAssigned[i] == 0) {
-centroids[i] = training_set[rand() % training_set.size()];
-}
-else {
-centroids[i] = {
-centroidAverage[i].feature1 / countAssigned[i],
-centroidAverage[i].feature2 / countAssigned[i],
-centroidAverage[i].feature3 / countAssigned[i],
-centroidAverage[i].feature4 / countAssigned[i]
-};
-}
-}
+    // divide by total number of points assigned to that centroid
+    for (int i = 0; i<centroidAverage.size(); i++) {
+        if (countAssigned[i] == 0)
+            centroids[i] = training_set[rand() % training_set.size()];
+        else {
+            centroids[i] = {
+                centroidAverage[i].feature1 / countAssigned[i],
+                centroidAverage[i].feature2 / countAssigned[i],
+                centroidAverage[i].feature3 / countAssigned[i],
+                centroidAverage[i].feature4 / countAssigned[i]
+            };
+        }
+    }
 }
 
 /**
@@ -332,10 +332,10 @@ centroidAverage[i].feature4 / countAssigned[i]
 * @param num_iters The number of iterations to run the clustering algorithm.
 */
 void clusteringAlgorithm (vector<labelled_x> &centroids, const int &num_centroids, vector<labelled_x> &training_set, vector<int> &c_assigned, const int num_iters) {
-for (int i = 0; i<num_iters; i++) {
-assignClosestCentroids(c_assigned, training_set, centroids);
-updateCentroids(centroids, num_centroids, training_set, c_assigned);
-}
+    for (int i = 0; i<num_iters; i++) {
+        assignClosestCentroids(c_assigned, training_set, centroids);
+        updateCentroids(centroids, num_centroids, training_set, c_assigned);
+    }
 }
 
 /**
@@ -349,36 +349,36 @@ updateCentroids(centroids, num_centroids, training_set, c_assigned);
 * @param num_iters The number of iterations for each K-Means run.
 */
 void runs (const int &num_runs, vector<labelled_x> &centroids, const int &num_centroids, vector<labelled_x> &training_set, vector<int> &c_assigned, const int num_iters) {
-double minCost = numeric_limits<double>::max();
-vector<labelled_x> minCentroids(num_centroids);
-vector<int> bestCAssigned(training_set.size());
-for (int i = 0; i<num_runs; i++) {
-initialiseCentroids(centroids, num_centroids, training_set);
-clusteringAlgorithm(centroids, num_centroids, training_set, c_assigned, num_iters);
+    double minCost = numeric_limits<double>::max();
+    vector<labelled_x> minCentroids(num_centroids);
+    vector<int> bestCAssigned(training_set.size());
+    for (int i = 0; i<num_runs; i++) {
+        initialiseCentroids(centroids, num_centroids, training_set);
+        clusteringAlgorithm(centroids, num_centroids, training_set, c_assigned, num_iters);
 
-double totalCost = 0;
-for (int j = 0; j<training_set.size(); j++) {
-labelled_x point = training_set[j];
-totalCost += computeCost(centroids[c_assigned[j]], point);
-}
+        double totalCost = 0;
+        for (int j = 0; j<training_set.size(); j++) {
+            labelled_x point = training_set[j];
+            totalCost += computeCost(centroids[c_assigned[j]], point);
+        }
 
-if (totalCost < minCost) {
-minCost = totalCost;
-minCentroids = centroids;
-bestCAssigned = c_assigned;
-}
-}
+        if (totalCost < minCost) {
+            minCost = totalCost;
+            minCentroids = centroids;
+            bestCAssigned = c_assigned;
+        }
+    }
 
-centroids = minCentroids;
-c_assigned = bestCAssigned;
+    centroids = minCentroids;
+    c_assigned = bestCAssigned;
 
-cout << "Centroids :" << endl;
-for (labelled_x centroid : centroids) {
-cout << centroid.feature1 << ", "
-<< centroid.feature2 << ", "
-<< centroid.feature3 << ", "
-<< centroid.feature4 << endl;
-}
+    cout << "Centroids :" << endl;
+    for (labelled_x centroid : centroids) {
+        cout << centroid.feature1 << ", "
+             << centroid.feature2 << ", "
+             << centroid.feature3 << ", "
+             << centroid.feature4 << endl;
+    }
 }
 
 /**
@@ -389,28 +389,27 @@ cout << centroid.feature1 << ", "
 * @param training_set The training data with original species labels.
 */
 void assignLabelToCentroids (vector<string> &centroidLabels, vector<int> &c_assigned, vector<labelled_x> &centroids, vector<labelled_x> &training_set) {
-for (int centroidIdx = 0; centroidIdx<centroids.size(); centroidIdx++) {
-vector<int> cluster;
-for (int i = 0; i<c_assigned.size(); i++) {
-if (c_assigned[i] == centroidIdx) {
-cluster.push_back(i);
-}
-}
+    for (int centroidIdx = 0; centroidIdx<centroids.size(); centroidIdx++) {
+        vector<int> cluster;
+        for (int i = 0; i<c_assigned.size(); i++) {
+            if (c_assigned[i] == centroidIdx)
+                cluster.push_back(i);
+        }
 
-map<string, int> m;
-for (int i = 0; i<cluster.size(); i++) {
-labelled_x point = training_set[cluster[i]];
-m[point.species_label]++;
-}
+        map<string, int> m;
+        for (int i = 0; i<cluster.size(); i++) {
+            labelled_x point = training_set[cluster[i]];
+            m[point.species_label]++;
+        }
 
-int max_occurrence = 0;
-for (auto it : m) {
-if (it.second > max_occurrence) {
-max_occurrence = it.second;
-centroidLabels[centroidIdx] = it.first;
-}
-}
-}
+        int max_occurrence = 0;
+        for (auto it : m) {
+            if (it.second > max_occurrence) {
+                max_occurrence = it.second;
+                centroidLabels[centroidIdx] = it.first;
+            }
+        }
+    }
 }
 
 /**
@@ -421,70 +420,70 @@ centroidLabels[centroidIdx] = it.first;
 * @param centroidLabels The assigned species labels for each centroid.
 */
 void test (vector<labelled_x> &centroids, vector<labelled_x> &test_set, vector<string> &centroidLabels) {
-vector<int> predictedCentroidIdx(test_set.size());
-int correct = 0;
+    vector<int> predictedCentroidIdx(test_set.size());
+    int correct = 0;
 
-for (int t = 0; t < test_set.size(); t++) {
-auto test = test_set[t];
-double minCost = numeric_limits<double>::max();
+    for (int t = 0; t < test_set.size(); t++) {
+        auto test = test_set[t];
+        double minCost = numeric_limits<double>::max();
 
-for (int i = 0; i<centroids.size(); i++) {
-labelled_x centroid = centroids[i];
+        for (int i = 0; i<centroids.size(); i++) {
+            labelled_x centroid = centroids[i];
 
-double cost = computeCost(centroid, test);
-if (cost < minCost) {
-minCost = cost;
-predictedCentroidIdx[t] = i;
-}
-}
+            double cost = computeCost(centroid, test);
+            if (cost < minCost) {
+                minCost = cost;
+                predictedCentroidIdx[t] = i;
+            }
+        }
 
-cout << "\nTest value " << test.feature1 << ", "
-<< test.feature2 << ", "
-<< test.feature3 << ", "
-<< test.feature4 << endl;
-cout << "Predicted Label = " << centroidLabels[predictedCentroidIdx[t]] << endl;
-cout << " Actual Label = " << test.species_label << endl;
+        cout << "\nTest value " << test.feature1 << ", "
+                                << test.feature2 << ", "
+                                << test.feature3 << ", "
+                                << test.feature4 << endl;
+        cout << "Predicted Label = " << centroidLabels[predictedCentroidIdx[t]] << endl;
+        cout << "Actual Label = " << test.species_label << endl;
 
-if (test.species_label == centroidLabels[predictedCentroidIdx[t]]) {
-cout << "----- CORRECT -----" << endl;
-correct++;
-}
-else cout << "----- WRONG -----" << endl;
-}
+        if (test.species_label == centroidLabels[predictedCentroidIdx[t]]) {
+            cout << "----- CORRECT -----" << endl;
+            correct++;
+        }
+        else cout << "----- WRONG -----" << endl;
+    }
 
-cout << "\n--- K-Means Test Results ---" << endl;
-cout << "Total test samples : " << test_set.size() << endl;
-cout << "Correctly classified: " << correct << endl;
-double accuracy = 100*correct/test_set.size();
-cout << "Accuracy = " << accuracy << "%" << endl;
+    cout << "\n--- K-Means Test Results ---" << endl;
+    cout << "Total test samples : " << test_set.size() << endl;
+    cout << "Correctly classified: " << correct << endl;
+    double accuracy = 100*correct/test_set.size();
+    cout << "Accuracy = " << accuracy << "%" << endl;
 }
 
 int main()
 {
-srand(time(0));
+    srand(time(0));
 
-// Define parameters for the K-Means algorithm
-const int test_set_size = 5; // Number of samples to reserve for the test set
-const int num_centroids = 3; // K value: Number of clusters (expected Iris species)
-const int num_iters = 100; // Number of iterations for each K-Means run (convergence steps)
-const int num_runs = 20; // Number of times to run K-Means with different initializations
-// to find the best clustering (to avoid local minima)
+    // Define parameters for the K-Means algorithm
+    const int test_set_size = 5;    // Number of samples to reserve for the test set
+    const int num_centroids = 3;    // K value: Number of clusters (expected Iris species)
+    const int num_iters = 100;      // Number of iterations for each K-Means run (convergence steps)
+    const int num_runs = 20;        // Number of times to run K-Means with different initializations
+                                    // to find the best clustering (to avoid local minima)
 
-// Vectors to hold the data and clustering results
-vector<labelled_x> training_set;
-vector<labelled_x> test_set;
-vector<labelled_x> centroids;
-vector<int> c_assigned; // Stores the centroid index assigned to each training point
-vector<string> centroidLabels(num_centroids); // Stores the derived species label for each centroid
+    // Vectors to hold the data and clustering results
+    vector<labelled_x> training_set;
+    vector<labelled_x> test_set;
+    vector<labelled_x> centroids;
+    vector<int> c_assigned; // Stores the centroid index assigned to each training point
+    vector<string> centroidLabels(num_centroids); // Stores the derived species label for each centroid
 
-// Step 1 : Prepare the dataset
-loadSets(training_set, test_set, test_set_size);
-// Step 2 : perform clustering algorithm multiple times to find the best result
-runs(num_runs, centroids, num_centroids, training_set, c_assigned, num_iters);
-// Step 3 : Assign the plurality label of each cluster to its centroid
-assignLabelToCentroids(centroidLabels, c_assigned, centroids, training_set);
-// Step 4 : Evaluate the model's performance on unseen data
-test(centroids, test_set, centroidLabels);
+    // Step 1 : Prepare the dataset
+    loadSets(training_set, test_set, test_set_size);
+    // Step 2 : perform clustering algorithm multiple times to find the best result
+    runs(num_runs, centroids, num_centroids, training_set, c_assigned, num_iters);
+    // Step 3 : Assign the plurality label of each cluster to its centroid
+    assignLabelToCentroids(centroidLabels, c_assigned, centroids, training_set);
+    // Step 4 : Evaluate the model's performance on unseen data
+    test(centroids, test_set, centroidLabels);
 
-return 0;
+    return 0;
 }
